@@ -1,98 +1,249 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Scraper API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API RESTful desenvolvida com NestJS para realizar scraping de notebooks no site de testes da WebScraper.io.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+O projeto realiza:
+- Extração de produtos de múltiplas páginas
+- Filtragem de notebooks pela marca
+- Ordenação por preço (menor → maior)
+- Exposição dos dados via endpoint REST em JSON
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+# Tecnologias utilizadas
 
-## Project setup
+- Node.js
+- TypeScript
+- NestJS
+- Axios
+- Cheerio
 
-```bash
-$ npm install
+---
+
+# Decisões técnicas
+
+## NestJS
+
+O NestJS foi escolhido por fornecer uma arquitetura modular e escalável, facilitando:
+- Separação de responsabilidades
+- Organização do código
+- Injeção de dependências
+- Manutenção futura da aplicação
+
+---
+
+## Axios
+
+Axios foi utilizado como cliente HTTP para realizar as requisições das páginas do site.
+
+Motivos:
+- Simplicidade de uso
+- Boa legibilidade
+- Suporte nativo a Promises
+
+---
+
+## Cheerio
+
+Cheerio foi utilizado para parsing do HTML.
+
+Motivos:
+- Permite manipular HTML usando seletores CSS
+- Leve e performático
+- Não necessita automação de navegador
+
+---
+
+## Estratégia de scraping
+
+A aplicação:
+1. Descobre automaticamente a quantidade total de páginas
+2. Realiza scraping concorrente utilizando Promise.all
+3. Consolida todos os produtos
+4. Filtra apenas notebooks da marca passada como parâmetro
+5. Ordena os resultados pelo menor preço
+
+---
+
+## Concorrência
+
+As páginas são processadas em paralelo utilizando Promise.all para melhorar performance.
+
+Em cenários reais com maior volume de requisições, seria recomendado utilizar controle de concorrência/rate limit para evitar bloqueios.
+
+---
+
+# Estrutura do projeto
+
+```txt
+src/
+ └── products/
+        ├── services/
+        ├── products.controller.ts/
+        └── products.module.ts
 ```
 
-## Compile and run the project
+---
+
+# Como rodar o projeto
+
+## Clone o repositório
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+git clone https://github.com/JuanHelpes/webscraper-api
 ```
 
-## Run tests
+---
+
+## Instale as dependências
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm install
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Execute o projeto
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run start:dev
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+A aplicação ficará disponível em:
 
-## Resources
+```txt
+http://localhost:3000
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+---
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Endpoint
 
-## Support
+## Buscar notebooks
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```http
+GET /products/:marca
+```
 
-## Stay in touch
+## Exemplo
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```txt
+http://localhost:3000/products/lenovo
+```
 
-## License
+---
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+# Exemplo de resposta
+
+```json
+[
+  {
+    "name": "Lenovo V110-15ISK",
+    "price": 321,
+    "description": "15.6\" HD notebook...",
+    "reviews": 12,
+    "rating": 4,
+    "link": "https://webscraper.io/test-sites/e-commerce/static/product/36",
+  }
+]
+```
+
+---
+
+# Observações
+
+- O projeto não utiliza Selenium, Puppeteer ou Playwright.
+- Toda extração é realizada apenas com requisições HTTP e parsing HTML.
+- O scraper foi desenvolvido especificamente para o site de testes fornecido no desafio.
+
+
+---------------------
+
+# Web Scraper em Go
+
+Este projeto consiste em um web scraper desenvolvido em Go para coletar informações de livros do site https://books.toscrape.com.
+
+O scraper percorre as páginas do catálogo e extrai:
+- título
+- preço
+- avaliação
+
+---
+
+# Problemas Encontrados e Correções Aplicadas
+
+
+## 1. Extensão incorreta da página inicial
+
+### Problema
+O crawler iniciava com:
+
+```go
+page := "page-2.htm"
+```
+
+O site utiliza arquivos `.html`, e não `.htm`.
+
+### Correção Aplicada
+
+```go
+page := "page-1.html"
+```
+
+### Justificativa
+A URL anterior era inválida e impedia o acesso correto às páginas do catálogo.
+
+---
+
+## 2. Erro na lógica da próxima página
+
+### Problema
+A função `getNextPage()` assumia incorretamente a estrutura da DOM:
+
+```go
+if n.FirstChild != nil && n.FirstChild.NextSibling != nil
+```
+
+O código esperava que o elemento `<a>` estivesse no `NextSibling`, porém no HTML real o `<a>` é o próprio `FirstChild`.
+
+HTML real:
+
+```html
+<li class="next">
+    <a href="page-2.html">next</a>
+</li>
+```
+
+### Correção Aplicada
+
+```go
+a := n.FirstChild
+
+if a != nil && a.Data == "a" {
+```
+
+### Justificativa
+A correção faz com que o scraper encontre corretamente o link da próxima página, permitindo navegar por toda a paginação do site.
+
+---
+
+## 3. Duplicação de registros na última página
+
+### Problema
+O código executava `parseBooks(doc)` duas vezes na última página:
+
+```go
+if next == "" {
+	parseBooks(doc)
+}
+```
+
+Isso fazia com que os livros da última página fossem adicionados em duplicidade.
+
+### Correção Aplicada
+O bloco foi removido.
+
+### Justificativa
+Os livros já haviam sido processados anteriormente no loop principal.
+
+---
