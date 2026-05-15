@@ -58,19 +58,29 @@ Motivos:
 
 A aplicação:
 1. Descobre automaticamente a quantidade total de páginas
-2. Realiza scraping concorrente utilizando Promise.all
-3. Consolida todos os produtos
+2. Realiza scraping concorrente das páginas
+3. Consolida todos os produtos encontrados
 4. Filtra apenas notebooks da marca passada como parâmetro
 5. Ordena os resultados pelo menor preço
 
 ---
 
-## Concorrência
+## Concorrência e resiliência
 
-As páginas são processadas em paralelo utilizando Promise.all para melhorar performance.
+As páginas são processadas em paralelo utilizando `Promise.all` em conjunto com `p-limit`, permitindo controlar a quantidade máxima de requisições simultâneas.
 
-Em cenários reais com maior volume de requisições, seria recomendado utilizar controle de concorrência/rate limit para evitar bloqueios.
+Essa abordagem melhora performance sem gerar excesso de conexões concorrentes.
 
+Além disso, foi implementado um mecanismo simples de retry automático para aumentar a resiliência da aplicação em casos de:
+- timeout
+- falhas temporárias de rede
+- erros HTTP transitórios
+
+As requisições também utilizam:
+- `User-Agent` customizado
+- timeout configurado
+
+para tornar o scraper mais confiável e evitar bloqueios básicos.
 ---
 
 # Estrutura do projeto
