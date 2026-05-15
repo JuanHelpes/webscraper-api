@@ -100,7 +100,7 @@ src/
 ## Clone o repositório
 
 ```bash
-git clone https://github.com/JuanHelpes/webscraper-api
+git clone https://github.com/JuanHelpes/webscraper-api.git
 ```
 
 ---
